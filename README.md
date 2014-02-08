@@ -19,3 +19,26 @@ assert env.INT == 1
 assert env.INT_LIST == [1,2,3]
 assert env.STRING == 'hello'
 ```
+
+The full API is:
+
+```
+class EnvParser(__builtin__.object)
+ |  Methods defined here:
+ |
+ |  __init__(self, description)
+ |
+ |  add_env(self, key, type=<type 'str'>, required=True, default=u'')
+ |
+ |  merge(self, other_env_parser)
+ |
+ |  parse(self, environ=None)
+ |
+```
+
+Use the `merge` function to merge two parsers together. That allows
+you to define a set of default arguments for reuse in other binaries.
+
+The functions for `type` take one parameter, a string, and return the
+according type. They are expected to throw a ValueError if the string
+can not be converted.
