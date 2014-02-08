@@ -20,6 +20,8 @@ assert env.INT_LIST == [1,2,3]
 assert env.STRING == 'hello'
 ```
 
+Calling `parse` without arguments will pick up `os.environ`.
+
 The full API is:
 
 ```
