@@ -1,3 +1,18 @@
+"""A module to parse environment variables into their correct
+types.
+
+Example:
+
+    p = envparse.EnvParser('Port Parser')
+    p.add_env('LISTEN_PORT', type=int)
+    p.add_env('HOST')
+
+    env = p.parse()
+
+    print("Listening on {}:{}".format(env.HOST, env.LISTEN_PORT))
+"""
+from __future__ import print_function, unicode_literals, absolute_import, division
+
 import csv as csv_reader
 import os
 import re
@@ -8,7 +23,16 @@ Key = collections.namedtuple('Key', 'type required default')
 class Error(Exception):
     pass
 
+
 def csv(type_):
+    """Expect a comma-seperated list of type_.
+
+    Example:
+
+    parser.add_env('INT_LIST', type=envparse.csv(int))
+    print(parser.parse(dict(INT_LIST='1,2,3')))
+
+    """
     def _parse(data):
         entries = csv_reader.reader([data]).next()
         result = []
@@ -19,7 +43,7 @@ def csv(type_):
                 # TODO what error to throw?
                 raise
         return result
-                
+
     return _parse
 
 
@@ -31,7 +55,7 @@ class EnvParser(object):
     def add_env(self, key, type=bytes, required=True, default=''):
         if key in self._keys:
             raise Error('Key `{}` already defined.'.format(key))
-    
+
         if not re.match(r'[A-Za-z_][A-Za-z0-9_]+', key):
             raise Error('Invalid key name `{}`.'.format(key))
 
@@ -52,7 +76,7 @@ class EnvParser(object):
                     value = key.type(environ.get(name, key.default))
                 except ValueError:
                     raise Error('Key `{}` could not be parsed as {}.'.format(name, key.type))
-                    
+
             values.append(value)
 
         return Env(*values)
